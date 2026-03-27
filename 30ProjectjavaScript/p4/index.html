@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .clock {
+           font-size: 150px;
+           box-shadow: 5px 10px;
+           border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+        <div class="clock" id="colck"></div>
+        <script>
+                var date = new Date();
+                function updateClock() {
+                    let hours = date.getHours();
+                    let minutes = date.getMinutes();
+                    let seconds = date.getSeconds();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12; // the hour '0' should be '12'
+                    minutes = minutes < 10 ? '0'+minutes : minutes;
+                    seconds = seconds < 10 ? '0'+seconds : seconds;
+                    document.getElementById('colck').innerHTML = `${hours}:${minutes}:${seconds} ${ampm}`;
+                    date.setTime(date.getTime() + 1000);
+                }
+                setInterval(updateClock, 1000);
+        </script>
+</body>
+</html>
