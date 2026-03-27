@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quote Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #1a1a2e;
+      }
+
+      .box {
+        color: aliceblue;
+        background-color: rgb(31, 31, 30);
+        min-height: 300px;
+        width: 600px;
+        margin: 100px auto;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 40px 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      /* ── Quote text ── */
+      .quotes {
+        font-family: Lora, serif;
+        font-size: 1.8rem;
+        text-align: center;
+        line-height: 1.5;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+      }
+
+      .quotes.fade-out {
+        opacity: 0;
+      }
+
+      /* ── Author ── */
+      .author {
+        font-family: Lora, serif;
+        font-size: 1.1rem;
+        color: #aaa;
+        margin-top: 15px;
+        font-style: italic;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+      }
+
+      .author.fade-out {
+        opacity: 0;
+      }
+
+      /* ── Button ── */
+      #btn {
+        background-color: rgb(255, 255, 255);
+        border: none;
+        color: rgb(31, 31, 30);
+        padding: 12px 28px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      #btn:hover {
+        background-color: rgb(31, 31, 30);
+        color: rgb(255, 255, 255);
+        outline: 2px solid white;
+      }
+
+      #btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ── Error message ── */
+      .error {
+        color: #ff6b6b;
+        font-family: Lora, serif;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+
+      <!-- Quote text -->
+      <div class="quotes" id="quotes">
+        Click the button to get a quote ✨
+      </div>
+
+      <!-- Author name -->
+      <div class="author" id="author"></div>
+
+      <!-- Button -->
+      <button id="btn">New Quote</button>
+
+    </div>
+
+    <script>
+      const btn    = document.getElementById("btn");
+      const quotes = document.getElementById("quotes");
+      const author = document.getElementById("author");
+
+      // ── Fetch a random quote from the API ──
+      async function getQuote() {
+
+        // 1. Disable button while loading
+        btn.disabled    = true;
+        btn.textContent = "Loading…";
+
+        // 2. Fade out current text
+        quotes.classList.add("fade-out");
+        author.classList.add("fade-out");
+
+        try {
+          // 3. Call the API
+          const response = await fetch("https://dummyjson.com/quotes/random");
+
+          if (!response.ok) throw new Error("API error");
+
+          const data = await response.json();
+
+          // 4. Wait for fade‑out to finish (400ms matches CSS)
+          await new Promise((r) => setTimeout(r, 400));
+
+          // 5. Update content
+          quotes.textContent = `"${data.quote}"`;
+          author.textContent = `— ${data.author}`;
+
+        } catch (error) {
+          console.error(error);
+          quotes.textContent = "Oops! Could not fetch a quote.";
+          author.textContent = "Check your connection and try again.";
+          quotes.classList.add("error");
+        }
+
+        // 6. Fade back in
+        quotes.classList.remove("fade-out");
+        author.classList.remove("fade-out");
+
+        // 7. Re‑enable button
+        btn.disabled    = false;
+        btn.textContent = "New Quote";
+      }
+
+      // ── Listen for click ──
+      btn.addEventListener("click", getQuote);
+
+      // ── Load first quote on page load ──
+      getQuote();
+    </script>
+  </body>
+</html>
